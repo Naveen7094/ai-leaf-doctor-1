@@ -9,6 +9,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <header className="flex items-center gap-2 px-5 pt-6 pb-3">
         <div className="grid h-9 w-9 place-items-center rounded-full bg-primary text-primary-foreground"><Leaf size={18} /></div>
         <span className="font-display text-xl">LeafDoctor</span>
+        <Link to="/login" className="ml-auto text-sm font-medium text-primary">Sign in</Link>
       </header>
       {children}
       <nav className="fixed inset-x-0 bottom-0 mx-auto flex max-w-md border-t bg-card">
