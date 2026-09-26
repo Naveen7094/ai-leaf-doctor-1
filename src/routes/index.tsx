@@ -23,7 +23,7 @@ function diagnose(): Result {
   const confidence = 78 + Math.random() * 20;
   const rest = 100 - confidence;
   const a = rest * (0.5 + Math.random() * 0.3);
-  return { top: pool[0], confidence, others: [{ d: pool[1], c: a }, { d: pool[2], c: rest - a }] };
+  return { top: pool[0]!, confidence, others: [{ d: pool[1]!, c: a }, { d: pool[2]!, c: rest - a }] };
 }
 
 function Scanner() {
