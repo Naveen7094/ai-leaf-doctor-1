@@ -52,6 +52,15 @@ function Library() {
               {open === d.id && (
                 <div className="mt-3 space-y-3 text-sm">
                   <p className="italic text-muted-foreground">{d.pathogen}</p>
+                  {d.overview && <p>{d.overview}</p>}
+                  {(d.parts || d.spread || d.conditions) && (
+                    <div className="grid gap-2 rounded-xl bg-muted p-3 text-xs">
+                      {d.parts && <p><b>Affects:</b> {d.parts}</p>}
+                      {d.spread && <p><b>Spreads by:</b> {d.spread}</p>}
+                      {d.conditions && <p><b>Favoured by:</b> {d.conditions}</p>}
+                    </div>
+                  )}
+                  <h4 className="font-semibold">Symptoms</h4>
                   <ul className="space-y-1">{d.symptoms.map((s) => <li key={s}>• {s}</li>)}</ul>
                   <TreatmentBlock title="🌿 Organic" items={d.organic} tone="organic" />
                   <TreatmentBlock title="🧪 Chemical" items={d.chemical} tone="chemical" />
