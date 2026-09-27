@@ -2,13 +2,13 @@
 
 AI-Based Crop Disease Detection System: build a mobile-friendly web app prototype featuring an interactive leaf scanner (photo upload and camera capture simulation), AI diagnosis results with confidence scores, organic and chemical treatment recommendations, and a searchable crop disease encyclopedia library.
 
-This project was built with [GitHub](https://github.dev).
+This project was built with [Lovable](https://lovable.dev).
 
-**Live app**: https://leaf-ai-doctor-62.github.app
+**Live app**: https://leaf-ai-doctor-62.lovable.app
 
-## Build with GitHub 
+## Build with Lovable 
 
-Continue developing this project in the [GitHub editor](https://github.dev/projects/d69e823b-011f-48f0-83ce-78207d5e4726).
+Continue developing this project in the [Lovable editor](https://lovable.dev/projects/d69e823b-011f-48f0-83ce-78207d5e4726).
 
 - **Ship faster**: describe what you want to build and Lovable handles the code.
 - **Stay in sync**: every change made in Lovable is committed straight to this repository.
