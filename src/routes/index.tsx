@@ -45,7 +45,7 @@ function Scanner() {
 
   return (
     <AppShell>
-      <section className="relative mx-3 overflow-hidden rounded-3xl px-4 pt-6 pb-5">
+      <section className="relative isolate mx-3 overflow-hidden rounded-3xl px-4 pt-6 pb-5">
         <img src={scanBg} alt="" width={768} height={1344} className="absolute inset-0 -z-10 h-full w-full object-cover" />
         <div className="absolute inset-0 -z-10 bg-gradient-to-b from-foreground/60 via-foreground/30 to-background/90" />
         <h1 className="font-display text-3xl leading-tight text-primary-foreground">Check your crop's health</h1>
