@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useRef, useState } from "react";
-import { Camera, Upload, RotateCcw, Loader2, Sparkles, Sprout, FlaskConical, ShieldCheck } from "lucide-react";
+import { Camera, Upload, RotateCcw, Loader2, Sparkles, Sprout, FlaskConical, ShieldCheck, Leaf, Sun, Focus, Hand } from "lucide-react";
+import { addHistory, toThumb } from "@/lib/history";
 import scanBg from "@/assets/scan-bg.jpg";
 import { AppShell, TreatmentBlock } from "@/components/AppShell";
 import { DISEASES, type Disease } from "@/lib/diseases";
@@ -34,12 +35,18 @@ function Scanner() {
   const [scanning, setScanning] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
 
+  const [drag, setDrag] = useState(false);
   const onFile = (f?: File) => {
-    if (!f) return;
+    if (!f || !f.type.startsWith("image/")) return;
     setImg(URL.createObjectURL(f));
     setResult(null);
     setScanning(true);
-    setTimeout(() => { setResult(diagnose()); setScanning(false); }, 2400);
+    const thumbP = toThumb(f);
+    setTimeout(async () => {
+      const r = diagnose();
+      setResult(r); setScanning(false);
+      addHistory({ id: crypto.randomUUID(), date: new Date().toISOString(), image: await thumbP, diseaseId: r.top.id, confidence: r.confidence });
+    }, 2400);
   };
   const reset = () => { setImg(null); setResult(null); setScanning(false); };
 
@@ -47,16 +54,30 @@ function Scanner() {
     <AppShell>
       <section className="relative isolate mx-3 overflow-hidden rounded-3xl px-4 pt-6 pb-5">
         <img src={scanBg} alt="" width={768} height={1344} className="absolute inset-0 -z-10 h-full w-full object-cover" />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-foreground/60 via-foreground/30 to-background/90" />
-        <h1 className="font-display text-3xl leading-tight text-primary-foreground">Check your crop's health</h1>
-        <p className="mt-1 text-sm text-primary-foreground/85">Photograph a single leaf in good light.</p>
+        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-foreground/55 via-foreground/20 to-foreground/60" />
+        <span className="inline-block rounded-full bg-background/25 px-3 py-1 text-xs text-primary-foreground backdrop-blur">AI leaf diagnosis</span>
+        <h1 className="mt-2 font-display text-3xl leading-tight text-primary-foreground">Check your crop's health</h1>
+        <p className="mt-1 text-sm text-primary-foreground/85">Snap or drop a photo of a single leaf.</p>
 
-        <div className="relative mt-5 aspect-square overflow-hidden rounded-3xl border-2 border-dashed border-primary/40 bg-card">
+        <div
+          onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
+          onDragLeave={() => setDrag(false)}
+          onDrop={(e) => { e.preventDefault(); setDrag(false); onFile(e.dataTransfer.files?.[0]); }}
+          onClick={() => !img && fileRef.current?.click()}
+          className={`relative mt-5 aspect-square cursor-pointer overflow-hidden rounded-3xl border border-primary-foreground/30 bg-background/20 backdrop-blur-md transition ${drag ? "ring-4 ring-primary" : ""}`}
+        >
           {img ? <img src={img} alt="Leaf" className="h-full w-full object-cover" /> : (
-            <div className="grid h-full place-items-center text-center text-muted-foreground">
-              <div><div className="mx-auto mb-3 h-24 w-24 rounded-full border-4 border-primary/30" /><p className="text-sm">Align the leaf inside the frame</p></div>
+            <div className="grid h-full place-items-center text-center text-primary-foreground">
+              <div>
+                <div className="mx-auto mb-3 grid h-20 w-20 place-items-center rounded-full bg-primary/80"><Leaf size={34} /></div>
+                <p className="font-medium">Tap or drop a leaf photo</p>
+                <p className="text-xs text-primary-foreground/75">JPG or PNG</p>
+              </div>
             </div>
           )}
+          {["top-3 left-3 border-t-4 border-l-4 rounded-tl-xl", "top-3 right-3 border-t-4 border-r-4 rounded-tr-xl", "bottom-3 left-3 border-b-4 border-l-4 rounded-bl-xl", "bottom-3 right-3 border-b-4 border-r-4 rounded-br-xl"].map((c) => (
+            <span key={c} className={`pointer-events-none absolute h-8 w-8 border-primary-foreground ${c}`} />
+          ))}
           {scanning && (
             <>
               <div className="scan-line absolute inset-x-0 h-1 bg-primary shadow-[0_0_20px] shadow-primary" />
@@ -70,10 +91,18 @@ function Scanner() {
         {!img ? (
           <div className="mt-4 grid grid-cols-2 gap-3">
             <button onClick={() => camRef.current?.click()} className="flex items-center justify-center gap-2 rounded-xl bg-primary py-3 font-medium text-primary-foreground"><Camera size={18} />Camera</button>
-            <button onClick={() => fileRef.current?.click()} className="flex items-center justify-center gap-2 rounded-xl border bg-card py-3 font-medium"><Upload size={18} />Upload</button>
+            <button onClick={() => fileRef.current?.click()} className="flex items-center justify-center gap-2 rounded-xl bg-card py-3 font-medium"><Upload size={18} />Upload</button>
           </div>
         ) : (
-          <button onClick={reset} className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border bg-card py-3 font-medium"><RotateCcw size={18} />Scan another leaf</button>
+          <button onClick={reset} className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-card py-3 font-medium"><RotateCcw size={18} />Scan another leaf</button>
+        )}
+        {!img && (
+          <div className="mt-4 grid grid-cols-3 gap-2 text-center text-[11px] text-primary-foreground">
+            {[[Sun, "Good light"], [Focus, "One leaf"], [Hand, "Hold steady"]].map(([I, t]) => {
+              const Icon = I as typeof Sun;
+              return <div key={t as string} className="rounded-xl bg-background/20 py-2 backdrop-blur"><Icon size={16} className="mx-auto mb-1" />{t as string}</div>;
+            })}
+          </div>
         )}
       </section>
 

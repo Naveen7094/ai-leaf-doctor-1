@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ScanLine, BookOpen, Leaf } from "lucide-react";
+import { ScanLine, BookOpen, Leaf, History } from "lucide-react";
 import type { ReactNode } from "react";
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -14,6 +14,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       {children}
       <nav className="fixed inset-x-0 bottom-0 mx-auto flex max-w-md border-t bg-card">
         <Link to="/" className={item} activeProps={{ className: "text-primary font-semibold" }} activeOptions={{ exact: true }}><ScanLine size={20} />Scan</Link>
+        <Link to="/history" className={item} activeProps={{ className: "text-primary font-semibold" }}><History size={20} />History</Link>
         <Link to="/library" className={item} activeProps={{ className: "text-primary font-semibold" }}><BookOpen size={20} />Library</Link>
       </nav>
     </div>
