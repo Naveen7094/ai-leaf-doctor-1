@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useRef, useState } from "react";
-import { Camera, Upload, RotateCcw, Loader2 } from "lucide-react";
+import { Camera, Upload, RotateCcw, Loader2, Sparkles, Sprout, FlaskConical, ShieldCheck } from "lucide-react";
+import scanBg from "@/assets/scan-bg.jpg";
 import { AppShell, TreatmentBlock } from "@/components/AppShell";
 import { DISEASES, type Disease } from "@/lib/diseases";
 
@@ -44,9 +45,11 @@ function Scanner() {
 
   return (
     <AppShell>
-      <section className="px-5">
-        <h1 className="font-display text-3xl leading-tight">Check your crop's health</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Photograph a single leaf in good light.</p>
+      <section className="relative mx-3 overflow-hidden rounded-3xl px-4 pt-6 pb-5">
+        <img src={scanBg} alt="" width={768} height={1344} className="absolute inset-0 -z-10 h-full w-full object-cover" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-foreground/60 via-foreground/30 to-background/90" />
+        <h1 className="font-display text-3xl leading-tight text-primary-foreground">Check your crop's health</h1>
+        <p className="mt-1 text-sm text-primary-foreground/85">Photograph a single leaf in good light.</p>
 
         <div className="relative mt-5 aspect-square overflow-hidden rounded-3xl border-2 border-dashed border-primary/40 bg-card">
           {img ? <img src={img} alt="Leaf" className="h-full w-full object-cover" /> : (
@@ -74,9 +77,31 @@ function Scanner() {
         )}
       </section>
 
+      {!result && !scanning && (
+        <section className="mt-6 px-5">
+          <h2 className="mb-3 font-display text-xl">Features</h2>
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { icon: Sparkles, t: "AI diagnosis", d: "Instant results with confidence scores" },
+              { icon: Sprout, t: "Organic care", d: "Natural, eco-friendly remedies" },
+              { icon: FlaskConical, t: "Chemical options", d: "Targeted sprays with doses" },
+              { icon: ShieldCheck, t: "Prevention", d: "Tips to protect future harvests" },
+            ].map(({ icon: I, t, d }) => (
+              <div key={t} className="rounded-2xl bg-card p-4 shadow-sm">
+                <div className="mb-2 grid h-9 w-9 place-items-center rounded-full bg-secondary text-primary"><I size={18} /></div>
+                <p className="text-sm font-semibold">{t}</p>
+                <p className="text-xs text-muted-foreground">{d}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       {result && (
         <section className="mt-6 space-y-4 px-5">
-          <div className="rounded-2xl bg-card p-5 shadow-sm">
+          <div className="overflow-hidden rounded-2xl bg-card shadow-sm">
+            {img && <img src={img} alt="Scanned leaf" className="h-40 w-full object-cover" />}
+            <div className="p-5">
             <p className="text-xs uppercase tracking-wider text-muted-foreground">Diagnosis · {result.top.crop}</p>
             <h2 className="font-display text-2xl">{result.top.name}</h2>
             <p className="text-sm italic text-muted-foreground">{result.top.pathogen}</p>
@@ -85,6 +110,7 @@ function Scanner() {
             <p className="mt-3 inline-block rounded-full bg-accent px-3 py-1 text-xs">Severity: {result.top.severity}</p>
             <div className="mt-4 space-y-1 text-xs text-muted-foreground">
               {result.others.map((o) => <div key={o.d.id} className="flex justify-between"><span>{o.d.crop} · {o.d.name}</span><span>{o.c.toFixed(1)}%</span></div>)}
+            </div>
             </div>
           </div>
           <div className="rounded-2xl bg-card p-5">
